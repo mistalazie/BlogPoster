@@ -30,6 +30,6 @@ const postSchema = mongoose.Schema({
 })
 
 const NewUserData = mongoose.model('UserData', signUpSchema)
-const NewPostScehma = mongoose.model('PostData', postSchema)
+const NewPostData = mongoose.model('PostData', postSchema)
 
-module.exports = {NewUserData, NewPostScehma}
+module.exports = {NewUserData, NewPostData}
