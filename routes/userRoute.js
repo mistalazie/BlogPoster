@@ -1,5 +1,5 @@
 const express = require('express');
-const NewUserData = require('../db');
+const { NewUserData } = require('../db');
 const { signUpSchema, loginSchema } = require('../types');
 const userRoute = express.Router();
 
@@ -36,7 +36,9 @@ userRoute.post('/login', async (req, res) => {
     const loginPayload = req.body;
     const parsedPayload = loginSchema.safeParse(loginPayload)
     if (!parsedPayload.success) {
+        console.error('Error')
         return res.status(400).json({ msg: "Invalid Input" });
+
     }
     try {
         const { username, password } = parsedPayload.data
@@ -44,8 +46,6 @@ userRoute.post('/login', async (req, res) => {
         if (!user || user.password !== password) {
             return res.status(400).json({ msg: "Invalid username or password" })
         }
-
-
         const token = jwt.sign({ userId: user._id }, JWT_SECRET)
         res.status(200).json({ msg: "Login Successful!", token })
     } catch (error) {
@@ -55,7 +55,7 @@ userRoute.post('/login', async (req, res) => {
 })
 
 userRoute.post('/logout', (req, res) => {
-    
+
 })
 
 module.exports = userRoute;

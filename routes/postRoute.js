@@ -13,6 +13,20 @@ postRoute.get('/', async (req, res) => {
     }
 })
 
+postRoute.get('/find/:id', async (req, res) => {
+    const { id } = req.params
+    try {
+        const findPost = await NewPostData.findById(id);
+        if (!findPost) {
+            return res.status(404).json({ msg: "Post not found" })
+        }
+        res.status(200).json(findPost)
+    } catch (error) {
+        console.error('Error fetching posts:', error);
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+})
+
 postRoute.post('/newpost', async (req, res) => {
     const postPayload = req.body;
     const parsedPayload = postSchema.safeParse(postPayload)
@@ -29,10 +43,36 @@ postRoute.post('/newpost', async (req, res) => {
 
 })
 
+postRoute.patch('/update/:id', async (req, res) => {
+    const { id } = req.params
+    const updatePayload = req.body
+    const parsedPayload = postSchema.safeParse(updatePayload)
+    if (!parsedPayload.success) {
+        return res.status(400).json({ msg: "Invalid inputs" })
+    }
+    try {
+        const updatePost = await NewPostData.findOneAndUpdate(
+            { _id: id },
+            { $set: parsedPayload.data },
+            { new: true }
+        )
+        if (!updatePost) {
+            return res.status(404).json({ msg: "Post not found" })
+        }
+        res.status(200).json({ msg: "Post updated successfully!" })
+    } catch (error) {
+        console.error('Error deleting user:', error);
+        res.status(500).json({ msg: "Internal Server Error" });
+    }
+})
+
 postRoute.delete('/delete/:id', async (req, res) => {
     const { id } = req.params
     try {
         const deletePost = await NewPostData.findByIdAndDelete(id)
+        if (deletePost === null) {
+            return res.status(404).json({ msg: "Post not found" })
+        }
         res.status(200).json({ msg: "Post deleted successfully!" })
     } catch (error) {
         console.error('Error deleting user:', error);

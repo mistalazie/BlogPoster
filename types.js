@@ -6,8 +6,8 @@ const signUpSchema = zod.object({
 });
 
 const loginSchema = zod.object({
-    username: zod.string().nonempty(),
-    password: zod.string().nonempty()
+    username: zod.string(),
+    password: zod.string()
 });
 
 const postSchema = zod.object({
