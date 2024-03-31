@@ -1,9 +1,10 @@
 const express = require('express');
 const { postSchema } = require('../types');
 const { NewPostData } = require('../db');
+const {authMiddleware} = require('./authMiddleware');
 const postRoute = express.Router();
 
-postRoute.get('/', async (req, res) => {
+postRoute.get('/', authMiddleware, async (req, res) => {
     try {
         const posts = await NewPostData.find({});
         res.status(200).json(posts);
@@ -13,7 +14,7 @@ postRoute.get('/', async (req, res) => {
     }
 })
 
-postRoute.get('/find/:id', async (req, res) => {
+postRoute.get('/find/:id', authMiddleware, async (req, res) => {
     const { id } = req.params
     try {
         const findPost = await NewPostData.findById(id);
@@ -27,7 +28,7 @@ postRoute.get('/find/:id', async (req, res) => {
     }
 })
 
-postRoute.post('/newpost', async (req, res) => {
+postRoute.post('/newpost', authMiddleware, async (req, res) => {
     const postPayload = req.body;
     const parsedPayload = postSchema.safeParse(postPayload)
     if (!parsedPayload.success) {
@@ -43,7 +44,7 @@ postRoute.post('/newpost', async (req, res) => {
 
 })
 
-postRoute.patch('/update/:id', async (req, res) => {
+postRoute.patch('/update/:id', authMiddleware, async (req, res) => {
     const { id } = req.params
     const updatePayload = req.body
     const parsedPayload = postSchema.safeParse(updatePayload)
@@ -66,7 +67,7 @@ postRoute.patch('/update/:id', async (req, res) => {
     }
 })
 
-postRoute.delete('/delete/:id', async (req, res) => {
+postRoute.delete('/delete/:id', authMiddleware, async (req, res) => {
     const { id } = req.params
     try {
         const deletePost = await NewPostData.findByIdAndDelete(id)
@@ -81,3 +82,11 @@ postRoute.delete('/delete/:id', async (req, res) => {
 })
 
 module.exports = postRoute;
+
+/*
+All posts
+Find post
+Add post
+Update post
+Delete post
+*/
